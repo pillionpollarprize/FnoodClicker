@@ -26,9 +26,11 @@ public class Clicker : MonoBehaviour
 
     private void Start()
     {
+        clicks = PlayerPrefs.GetInt("Clicks", 0);
         audioSource = GetComponent<AudioSource>();
         bpc = 0;
         InvokeRepeating("ClicksPerSecond", 0, 1);
+
     }
     private void OnMouseDown() 
     {
@@ -45,10 +47,28 @@ public class Clicker : MonoBehaviour
             .ChangeStartValue(scale * Vector3.one)
             .SetEase(ease);
             //.SetLoops(2, LoopType.Yoyo);
+        
     }
     void ClicksPerSecond()
     {
         cpsText.text = $"CPS: {bpc}";
         bpc = 0;
+    }
+    public void SaveProgress()
+    {
+        PlayerPrefs.SetInt("Clicks", clicks);
+
+        PlayerPrefs.Save();
+    }
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            SaveProgress();
+        }
+    }
+    private void OnApplicationQuit()
+    {
+        SaveProgress();
     }
 }
